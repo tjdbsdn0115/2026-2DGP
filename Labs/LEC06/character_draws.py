@@ -49,7 +49,8 @@ def move_rectangle():
     move_left() 
 
 def move_ab():
-    print('A -> B')
+    for x in range(100, 701, 5):
+        draw_character(x, 100)
 
 def move_bc():
     print('B -> C')
