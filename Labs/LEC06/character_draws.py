@@ -49,11 +49,18 @@ def move_rectangle():
     move_left() 
 
 def move_line(x0, y0, x1, y1, steps=100):
-    for step in range(steps + 1):
+    for step in range(1, steps + 1):
         t = step / steps
         x = x0 + (x1 - x0) * t
         y = y0 + (y1 - y0) * t
         draw_character(x, y)
+
+def move_triangle():
+    print('triangle')
+    draw_character(100, 100)
+    move_ab()
+    move_bc()
+    move_ca()
 
 def move_ab():
     move_line(100, 100, 700, 100)
@@ -63,12 +70,6 @@ def move_bc():
 
 def move_ca():
     move_line(400, 500, 100, 100)
-
-def move_triangle():
-    print('triangle')
-    move_ab()
-    move_bc()
-    move_ca()
 
 while True:
     move_circle()
