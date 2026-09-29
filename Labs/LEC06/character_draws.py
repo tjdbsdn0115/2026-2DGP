@@ -20,7 +20,6 @@ def draw_character(x, y):
     delay(FRAME_DELAY)
 
 def move_circle():
-    print('circle')
     for degree in range(360):
         theta = math.radians(degree)
         x = 400 + 200 * math.cos(theta)
@@ -48,7 +47,6 @@ def move_left():
         draw_character(LEFT, y)
 
 def move_rectangle():
-    print('rectangle')
     move_top()
     move_right()
     move_bottom()
@@ -71,16 +69,15 @@ def move_ca():
     move_line(*C, *A)
 
 def move_triangle():
-    print('triangle')
     draw_character(*A)
     move_ab()
     move_bc()
     move_ca()
 
-while True:
+def run_once():
     move_circle()
     move_rectangle()
     move_triangle()
-    break
 
+run_once()
 close_canvas()
