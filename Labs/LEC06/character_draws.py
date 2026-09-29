@@ -79,5 +79,7 @@ def run_once():
     move_rectangle()
     move_triangle()
 
-run_once()
+while True:
+    run_once()
+
 close_canvas()
