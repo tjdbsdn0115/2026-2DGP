@@ -4,6 +4,10 @@ from pico2d import *
 open_canvas(800, 600)
 character = load_image('character.png')
 
+A = (100, 100)
+B = (700, 100)
+C = (400, 500)
+
 LEFT, RIGHT = 50, 750
 BOTTOM, TOP = 50, 550
 
@@ -55,21 +59,21 @@ def move_line(x0, y0, x1, y1, steps=100):
         y = y0 + (y1 - y0) * t
         draw_character(x, y)
 
+def move_ab():
+    move_line(*A, *B)
+
+def move_bc():
+    move_line(*B, *C)
+
+def move_ca():
+    move_line(*C, *A)
+
 def move_triangle():
     print('triangle')
-    draw_character(100, 100)
+    draw_character(*A)
     move_ab()
     move_bc()
     move_ca()
-
-def move_ab():
-    move_line(100, 100, 700, 100)
-
-def move_bc():
-    move_line(700, 100, 400, 500)
-
-def move_ca():
-    move_line(400, 500, 100, 100)
 
 while True:
     move_circle()
