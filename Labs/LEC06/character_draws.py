@@ -79,7 +79,10 @@ def run_once():
     move_rectangle()
     move_triangle()
 
-while True:
-    run_once()
-
-close_canvas()
+try:
+    while True:
+        run_once()
+except KeyboardInterrupt:
+    pass
+finally:
+    close_canvas()
