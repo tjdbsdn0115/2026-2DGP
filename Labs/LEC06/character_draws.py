@@ -22,8 +22,24 @@ def move_circle():
         update_canvas()
         delay(0.1)
 
+def move_top():
+    print('top')
+
+def move_right():
+    print('right')
+
+def move_bottom():
+    print('bottom')
+
+def move_left():
+    print('left')
+
 def move_rectangle():
     print('rectangle')
+    move_top()
+    move_right()
+    move_bottom()
+    move_left() 
 
 def move_triangle():
     print('triangle')
