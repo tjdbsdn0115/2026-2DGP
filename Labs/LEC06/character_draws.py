@@ -59,7 +59,7 @@ def move_ab():
     move_line(100, 100, 700, 100)
 
 def move_bc():
-    print('B -> C')
+    move_line(700, 100, 400, 500)
 
 def move_ca():
     print('C -> A')
