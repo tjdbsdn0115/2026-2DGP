@@ -4,6 +4,9 @@ from pico2d import *
 open_canvas(800, 600)
 character = load_image('character.png')
 
+LEFT, RIGHT = 50, 750
+BOTTOM, TOP = 50, 550
+
 def draw_character(x, y):
     clear_canvas()
     character.draw(x, y)
@@ -23,20 +26,20 @@ def move_circle():
         delay(0.1)
 
 def move_top():
-    for x in range(50, 751, 5):
-        draw_character(x, 550)
+    for x in range(LEFT, RIGHT + 1, 5):
+        draw_character(x, TOP)
 
 def move_right():
-    for y in range(545, 49, -5):
-        draw_character(750, y)
+    for y in range(TOP - 5, BOTTOM - 1, -5):
+        draw_character(RIGHT, y)
 
 def move_bottom():
-    for x in range(745, 49, -5):
-        draw_character(x, 50)
+    for x in range(RIGHT - 5, LEFT - 1, -5):
+        draw_character(x, BOTTOM)
 
 def move_left():
-    for y in range(55, 551, 5):
-        draw_character(50, y)
+    for y in range(BOTTOM + 5, TOP + 1, 5):
+        draw_character(LEFT, y)
 
 def move_rectangle():
     print('rectangle')
