@@ -48,9 +48,15 @@ def move_rectangle():
     move_bottom()
     move_left() 
 
+def move_line(x0, y0, x1, y1, steps=100):
+    for step in range(steps + 1):
+        t = step / steps
+        x = x0 + (x1 - x0) * t
+        y = y0 + (y1 - y0) * t
+        draw_character(x, y)
+
 def move_ab():
-    for x in range(100, 701, 5):
-        draw_character(x, 100)
+    move_line(100, 100, 700, 100)
 
 def move_bc():
     print('B -> C')
