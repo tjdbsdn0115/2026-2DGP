@@ -1,4 +1,8 @@
 # 실습 과제 진행
+from pico2d import *
+
+open_canvas(800,600)
+
 def move_circle():
     print("cirle")
     pass
@@ -13,4 +17,7 @@ while True:
     move_circle()
     move_rectangle()
     move_triangle()
+
     pass
+
+close_canvas()
