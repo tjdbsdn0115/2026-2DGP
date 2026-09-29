@@ -48,8 +48,20 @@ def move_rectangle():
     move_bottom()
     move_left() 
 
+def move_ab():
+    print('A -> B')
+
+def move_bc():
+    print('B -> C')
+
+def move_ca():
+    print('C -> A')
+
 def move_triangle():
     print('triangle')
+    move_ab()
+    move_bc()
+    move_ca()
 
 while True:
     move_circle()
