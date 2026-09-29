@@ -23,7 +23,8 @@ def move_circle():
         delay(0.1)
 
 def move_top():
-    print('top')
+    for x in range(50, 751, 5):
+        draw_character(x, 550)
 
 def move_right():
     print('right')
