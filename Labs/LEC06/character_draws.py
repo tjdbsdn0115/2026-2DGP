@@ -62,7 +62,7 @@ def move_bc():
     move_line(700, 100, 400, 500)
 
 def move_ca():
-    print('C -> A')
+    move_line(400, 500, 100, 100)
 
 def move_triangle():
     print('triangle')
