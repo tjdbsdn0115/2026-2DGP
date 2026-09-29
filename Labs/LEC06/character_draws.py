@@ -1,3 +1,4 @@
+import math
 from pico2d import *
 
 open_canvas(800, 600)
@@ -5,8 +6,11 @@ character = load_image('character.png')
 
 def move_circle():
     print('circle')
+    theta = math.radians(0)
+    x = 400 + 200 * math.cos(theta)
+    y = 300 + 200 * math.sin(theta)
     clear_canvas()
-    character.draw(400, 300)
+    character.draw(x, y)
     update_canvas()
     delay(5)
 
