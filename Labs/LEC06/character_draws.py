@@ -4,6 +4,8 @@ from pico2d import *
 open_canvas(800, 600)
 character = load_image('character.png')
 
+FRAME_DELAY = 0.01
+
 A = (100, 100)
 B = (700, 100)
 C = (400, 500)
@@ -15,7 +17,7 @@ def draw_character(x, y):
     clear_canvas()
     character.draw(x, y)
     update_canvas()
-    delay(0.01)
+    delay(FRAME_DELAY)
 
 def move_circle():
     print('circle')
