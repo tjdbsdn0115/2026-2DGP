@@ -29,13 +29,14 @@ def move_top():
 def move_right():
     for y in range(550, 49, -5):
         draw_character(750, y)
-        
+
 def move_bottom():
     for x in range(750, 49, -5):
         draw_character(x, 50)
 
 def move_left():
-    print('left')
+    for y in range(50, 551, 5):
+        draw_character(50, y)
 
 def move_rectangle():
     print('rectangle')
