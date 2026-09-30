@@ -48,14 +48,15 @@ def draw_frame(sheet, frame):
 def main():
     open_canvas(WIDTH, HEIGHT)
     sheet = load_image("SamuraiSheet.png")
-    for name, fps, frames in animations:
-        for repeat in range(5):
-            for frame in frames:
-                clear_canvas()
-                draw_frame(sheet, frame)
-                update_canvas()
-                delay(1 / fps)
-        delay(1)  # 다섯 회 뒤 마지막 프레임을 1초 유지
+    while True:
+        for name, fps, frames in animations:
+            for repeat in range(5):
+                for frame in frames:
+                    clear_canvas()
+                    draw_frame(sheet, frame)
+                    update_canvas()
+                    delay(1 / fps)
+            delay(1)  # 다섯 회 뒤 마지막 프레임을 1초 유지
     close_canvas()
 
 
