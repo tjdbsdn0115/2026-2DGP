@@ -7,8 +7,6 @@ WIDTH, HEIGHT = 960, 720
 SCALE = 6  # 가장 짧은 63px 자세도 378px로 표시
 REPEAT_COUNT = 5
 PAUSE_SECONDS = 1.0
-CELL_SIZE = 128
-ANCHOR_X, ANCHOR_Y = 69, 85.5  # 원본 128px 칸 안의 공통 중심
 
 
 # 각 프레임: (왼쪽 x, 위쪽 y, 폭, 높이)
@@ -36,10 +34,7 @@ animations = [
 def draw_frame(sheet, frame):
     left, top, width, height = frame
     bottom = sheet.h - top - height  # pico2d는 아래쪽이 y=0
-    # 잘라낸 크기가 달라도 원래 자세의 위치를 보존한다.
-    x = WIDTH / 2 + (left % CELL_SIZE + width / 2 - ANCHOR_X) * SCALE
-    y = HEIGHT / 2 + (ANCHOR_Y - top % CELL_SIZE - height / 2) * SCALE
-    sheet.clip_draw(left, bottom, width, height, x, y,
+    sheet.clip_draw(left, bottom, width, height, WIDTH / 2, HEIGHT / 2,
                     width * SCALE, height * SCALE)
 
 
