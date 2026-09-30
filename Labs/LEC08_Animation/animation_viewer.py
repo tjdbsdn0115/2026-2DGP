@@ -27,8 +27,8 @@ animations = [
         (596, 526, 166, 157), (791, 563, 170, 160), (985, 599, 161, 140),
     ]),
     ("Attack", 10, [
-        (19, 566, 53, 74), (148, 567, 52, 73), (276, 567, 57, 73),
-        (404, 566, 63, 74), (532, 566, 101, 74), (660, 566, 54, 74),
+        (40, 807, 162, 169), (216, 809, 155, 167), (423, 751, 142, 225),
+        (593, 815, 216, 161), (789, 810, 206, 166), (1001, 806, 161, 170),
     ]),
 ]
 
@@ -61,7 +61,7 @@ def show_for(sheet, frame, seconds):
 def main():
     open_canvas(WIDTH, HEIGHT)
     try:
-        image_path = Path(__file__).resolve().parent / "SamuraiSheet.png"
+        image_path = Path(__file__).resolve().parent / "adventurer_sheet.png"
         sheet = load_image(str(image_path))
         while True:
             for name, fps, frames in animations:
