@@ -29,11 +29,12 @@ def main():
     open_canvas(WIDTH, HEIGHT)
     sheet = load_image("SamuraiSheet.png")
     for name, fps, frames in animations:
-        for frame in frames:
-            clear_canvas()
-            draw_frame(sheet, frame)
-            update_canvas()
-            delay(1 / fps)
+        for repeat in range(5):
+            for frame in frames:
+                clear_canvas()
+                draw_frame(sheet, frame)
+                update_canvas()
+                delay(1 / fps)
     close_canvas()
 
 
