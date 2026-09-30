@@ -13,10 +13,17 @@ frames = [
 ]
 
 
+def draw_frame(sheet, frame):
+    left, top, width, height = frame
+    bottom = sheet.h - top - height  # pico2d는 아래쪽이 y=0
+    sheet.clip_draw(left, bottom, width, height, 400, 300)
+
+
 def main():
     open_canvas()
     sheet = load_image("SamuraiSheet.png")
     clear_canvas()
+    draw_frame(sheet, frames[0])
     update_canvas()
     delay(0.1)
     close_canvas()
