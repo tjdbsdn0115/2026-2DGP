@@ -1,6 +1,7 @@
 # Drill #8: LEC08의 pico2d 예제를 이용한 애니메이션 뷰어
 from pico2d import *
 from time import perf_counter
+from pathlib import Path
 
 WIDTH, HEIGHT = 960, 720
 SCALE = 6
@@ -64,7 +65,8 @@ def show_for(sheet, frame, seconds):
 def main():
     open_canvas(WIDTH, HEIGHT)
     try:
-        sheet = load_image("SamuraiSheet.png")
+        image_path = Path(__file__).resolve().parent / "SamuraiSheet.png"
+        sheet = load_image(str(image_path))
         while True:
             for name, fps, frames in animations:
                 for repeat in range(5):
