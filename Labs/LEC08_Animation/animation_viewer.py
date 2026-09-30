@@ -30,10 +30,11 @@ def draw_frame(sheet, frame):
 def main():
     open_canvas(WIDTH, HEIGHT)
     sheet = load_image("SamuraiSheet.png")
-    clear_canvas()
-    draw_frame(sheet, frames[0])
-    update_canvas()
-    delay(0.1)
+    for frame in frames:
+        clear_canvas()
+        draw_frame(sheet, frame)
+        update_canvas()
+        delay(0.1)
     close_canvas()
 
 
