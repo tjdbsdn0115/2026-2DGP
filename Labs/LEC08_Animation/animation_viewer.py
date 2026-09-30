@@ -1,5 +1,6 @@
 # Drill #8: LEC08의 pico2d 예제를 이용한 애니메이션 뷰어
 from pico2d import *
+from time import perf_counter
 
 WIDTH, HEIGHT = 960, 720
 SCALE = 6
@@ -49,13 +50,14 @@ def show_for(sheet, frame, seconds):
     clear_canvas()
     draw_frame(sheet, frame)
     update_canvas()
-    for tick in range(round(seconds / 0.01)):
+    end = perf_counter() + seconds
+    while perf_counter() < end:
         for event in get_events():
             if event.type == SDL_QUIT:
                 return False
             if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                 return False
-        delay(0.01)
+        delay(min(0.01, max(0, end - perf_counter())))
     return True
 
 
