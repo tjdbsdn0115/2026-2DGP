@@ -1,6 +1,8 @@
 # Drill #8: LEC08의 pico2d 예제를 이용한 애니메이션 뷰어
 from pico2d import *
 
+SCALE = 6
+
 
 # 각 프레임: (왼쪽 x, 위쪽 y, 폭, 높이)
 frames = [
@@ -16,7 +18,8 @@ frames = [
 def draw_frame(sheet, frame):
     left, top, width, height = frame
     bottom = sheet.h - top - height  # pico2d는 아래쪽이 y=0
-    sheet.clip_draw(left, bottom, width, height, 400, 300)
+    sheet.clip_draw(left, bottom, width, height, 400, 300,
+                    width * SCALE, height * SCALE)
 
 
 def main():
