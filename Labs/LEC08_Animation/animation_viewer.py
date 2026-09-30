@@ -7,13 +7,11 @@ ANCHOR_X, ANCHOR_Y = 69, 85.5  # 원본 128px 칸 안의 공통 중심
 
 
 # 각 프레임: (왼쪽 x, 위쪽 y, 폭, 높이)
-frames = [
-    (35, 45, 46, 81),
-    (163, 44, 46, 82),
-    (291, 43, 46, 83),
-    (419, 43, 46, 83),
-    (547, 43, 46, 83),
-    (675, 44, 46, 82),
+animations = [
+    ("Idle", 8, [
+        (35, 45, 46, 81), (163, 44, 46, 82), (291, 43, 46, 83),
+        (419, 43, 46, 83), (547, 43, 46, 83), (675, 44, 46, 82),
+    ]),
 ]
 
 
@@ -30,11 +28,12 @@ def draw_frame(sheet, frame):
 def main():
     open_canvas(WIDTH, HEIGHT)
     sheet = load_image("SamuraiSheet.png")
-    for frame in frames:
-        clear_canvas()
-        draw_frame(sheet, frame)
-        update_canvas()
-        delay(0.1)
+    for name, fps, frames in animations:
+        for frame in frames:
+            clear_canvas()
+            draw_frame(sheet, frame)
+            update_canvas()
+            delay(1 / fps)
     close_canvas()
 
 
