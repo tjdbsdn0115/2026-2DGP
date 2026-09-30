@@ -4,7 +4,10 @@ from time import perf_counter
 from pathlib import Path
 
 WIDTH, HEIGHT = 960, 720
-SCALE = 6
+SCALE = 6  # 가장 짧은 63px 자세도 378px로 표시
+REPEAT_COUNT = 5
+PAUSE_SECONDS = 1.0
+CELL_SIZE = 128
 ANCHOR_X, ANCHOR_Y = 69, 85.5  # 원본 128px 칸 안의 공통 중심
 
 
@@ -41,8 +44,8 @@ def draw_frame(sheet, frame):
     left, top, width, height = frame
     bottom = sheet.h - top - height  # pico2d는 아래쪽이 y=0
     # 잘라낸 크기가 달라도 원래 자세의 위치를 보존한다.
-    x = WIDTH / 2 + (left % 128 + width / 2 - ANCHOR_X) * SCALE
-    y = HEIGHT / 2 + (ANCHOR_Y - top % 128 - height / 2) * SCALE
+    x = WIDTH / 2 + (left % CELL_SIZE + width / 2 - ANCHOR_X) * SCALE
+    y = HEIGHT / 2 + (ANCHOR_Y - top % CELL_SIZE - height / 2) * SCALE
     sheet.clip_draw(left, bottom, width, height, x, y,
                     width * SCALE, height * SCALE)
 
@@ -69,11 +72,11 @@ def main():
         sheet = load_image(str(image_path))
         while True:
             for name, fps, frames in animations:
-                for repeat in range(5):
+                for repeat in range(REPEAT_COUNT):
                     for frame in frames:
                         if not show_for(sheet, frame, 1 / fps):
                             return
-                if not show_for(sheet, frames[-1], 1):
+                if not show_for(sheet, frames[-1], PAUSE_SECONDS):
                     return
     finally:
         close_canvas()
