@@ -4,6 +4,7 @@ from pico2d import *
 
 def main():
     open_canvas()
+    sheet = load_image("SamuraiSheet.png")
     clear_canvas()
     update_canvas()
     delay(0.1)
