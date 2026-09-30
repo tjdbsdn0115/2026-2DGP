@@ -1,15 +1,16 @@
-# Drill #8: LEC08의 pico2d 예제를 이용한 애니메이션 뷰어
+# Drill #8: LEC08 방식으로 새로 제작한 캐릭터 이미지 재생
 from pico2d import *
 from time import perf_counter
 from pathlib import Path
 
 WIDTH, HEIGHT = 960, 720
-SCALE = 6  # 가장 짧은 63px 자세도 378px로 표시
+SCALE = 3  # 가장 작은 자세도 화면 높이의 절반 이상으로 표시
 REPEAT_COUNT = 5
 PAUSE_SECONDS = 1.0
 
 
-# 각 프레임: (왼쪽 x, 위쪽 y, 폭, 높이)
+# 새 PNG에서 직접 확인한 프레임: (왼쪽 x, 위쪽 y, 폭, 높이)
+# 대기 4개 / 걷기 8개 / 점프 6개 / 공격 6개
 animations = [
     ("Idle", 6, [
         (47, 69, 137, 174), (236, 69, 137, 174), (424, 69, 136, 174),
