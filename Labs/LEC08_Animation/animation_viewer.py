@@ -45,6 +45,20 @@ def draw_frame(sheet, frame):
                     width * SCALE, height * SCALE)
 
 
+def show_for(sheet, frame, seconds):
+    clear_canvas()
+    draw_frame(sheet, frame)
+    update_canvas()
+    for tick in range(round(seconds / 0.01)):
+        for event in get_events():
+            if event.type == SDL_QUIT:
+                return False
+            if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                return False
+        delay(0.01)
+    return True
+
+
 def main():
     open_canvas(WIDTH, HEIGHT)
     sheet = load_image("SamuraiSheet.png")
@@ -52,11 +66,10 @@ def main():
         for name, fps, frames in animations:
             for repeat in range(5):
                 for frame in frames:
-                    clear_canvas()
-                    draw_frame(sheet, frame)
-                    update_canvas()
-                    delay(1 / fps)
-            delay(1)  # 다섯 회 뒤 마지막 프레임을 1초 유지
+                    if not show_for(sheet, frame, 1 / fps):
+                        return
+            if not show_for(sheet, frames[-1], 1):
+                return
     close_canvas()
 
 
