@@ -63,16 +63,18 @@ def show_for(sheet, frame, seconds):
 
 def main():
     open_canvas(WIDTH, HEIGHT)
-    sheet = load_image("SamuraiSheet.png")
-    while True:
-        for name, fps, frames in animations:
-            for repeat in range(5):
-                for frame in frames:
-                    if not show_for(sheet, frame, 1 / fps):
-                        return
-            if not show_for(sheet, frames[-1], 1):
-                return
-    close_canvas()
+    try:
+        sheet = load_image("SamuraiSheet.png")
+        while True:
+            for name, fps, frames in animations:
+                for repeat in range(5):
+                    for frame in frames:
+                        if not show_for(sheet, frame, 1 / fps):
+                            return
+                if not show_for(sheet, frames[-1], 1):
+                    return
+    finally:
+        close_canvas()
 
 
 if __name__ == "__main__":
