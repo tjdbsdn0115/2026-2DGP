@@ -55,6 +55,7 @@ def main():
                 draw_frame(sheet, frame)
                 update_canvas()
                 delay(1 / fps)
+        delay(1)  # 다섯 회 뒤 마지막 프레임을 1초 유지
     close_canvas()
 
 
