@@ -3,6 +3,8 @@
 from pathlib import Path
 from dataclasses import dataclass
 from time import monotonic
+from math import isfinite
+import sys
 
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 600
@@ -167,13 +169,9 @@ class Player:
     def frame(self):
         return self.animation.frames[self.frame_index]
 
-    @property
-    def pause_complete(self):
-        return self.state == PAUSED and self.elapsed + 1e-12 >= PAUSE_SECONDS
-
     def update(self, delta):
-        if delta < 0:
-            raise ValueError("경과 시간은 음수일 수 없습니다.")
+        if not isfinite(delta) or delta < 0:
+            raise ValueError("경과 시간은 유한한 0 이상의 수여야 합니다.")
         self.elapsed += delta
         while True:
             duration = (self.animation.interval if self.state == PLAYING
@@ -231,24 +229,37 @@ def should_quit(events, graphics):
 
 def main():
     """프로그램 진입점."""
-    import pico2d
-
-    pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+    canvas_open = False
     try:
-        sprite = load_sprite(pico2d)
-        validate_animations(sprite.w, sprite.h)
-        player = Player()
-        previous = monotonic()
-        while not should_quit(pico2d.get_events(), pico2d):
-            now = monotonic()
-            player.update(now - previous)
-            previous = now
-            pico2d.clear_canvas()
-            draw_frame(sprite, player.frame)
-            pico2d.update_canvas()
-            pico2d.delay(0.005)
-    finally:
-        pico2d.close_canvas()
+        import pico2d
+
+        try:
+            pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+            canvas_open = True
+            sprite = load_sprite(pico2d)
+            validate_animations(sprite.w, sprite.h)
+            player = Player()
+            previous = monotonic()
+            while not should_quit(pico2d.get_events(), pico2d):
+                now = monotonic()
+                player.update(now - previous)
+                previous = now
+                pico2d.clear_canvas()
+                draw_frame(sprite, player.frame)
+                pico2d.update_canvas()
+                pico2d.delay(0.005)
+        finally:
+            if canvas_open:
+                pico2d.close_canvas()
+    except ImportError as error:
+        print(f"pico2d를 불러올 수 없습니다. python -m pip install pico2d ({error})",
+              file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        return 0
+    except Exception as error:
+        print(f"소닉 애니메이션 뷰어 오류: {error}", file=sys.stderr)
+        return 1
     return 0
 
 
