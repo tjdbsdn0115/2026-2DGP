@@ -7,6 +7,7 @@ from time import monotonic
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 600
 SCALE = 4
+BASELINE_Y = CANVAS_HEIGHT / 2 - 20 * SCALE
 FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
 PAUSE_SECONDS = 1.0
@@ -36,9 +37,6 @@ class Frame:
             raise ValueError(f"이미지 범위를 벗어난 프레임: {self}")
 
 
-FIRST_FRAME = Frame(1, 39, 29, 39, 14.5, 39)
-
-
 @dataclass(frozen=True)
 class Animation:
     name: str
@@ -47,7 +45,9 @@ class Animation:
 
 
 def frames_from_rectangles(rectangles):
-    return tuple(Frame(left, top, width, height, width / 2, height)
+    """행의 공통 발 기준선을 유지해 자르기 높이에 따른 흔들림을 줄인다."""
+    baseline = max(top + height for _, top, _, height in rectangles)
+    return tuple(Frame(left, top, width, height, width / 2, baseline - top)
                  for left, top, width, height in rectangles)
 
 
@@ -203,7 +203,8 @@ def draw_frame(sprite, frame):
     """프레임 종횡비를 유지하여 화면 중앙에 4배 출력한다."""
     sprite.clip_draw(
         frame.left, frame.bottom(sprite.h), frame.width, frame.height,
-        CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
+        CANVAS_WIDTH / 2 + (frame.width / 2 - frame.anchor_x) * SCALE,
+        BASELINE_Y + (frame.anchor_y - frame.height / 2) * SCALE,
         frame.width * SCALE, frame.height * SCALE,
     )
 
