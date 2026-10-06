@@ -10,7 +10,14 @@ PAUSE_SECONDS = 1.0
 
 def main():
     """프로그램 진입점."""
-    print("소닉 애니메이션 뷰어")
+    import pico2d
+
+    pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+    try:
+        pico2d.clear_canvas()
+        pico2d.update_canvas()
+    finally:
+        pico2d.close_canvas()
     return 0
 
 
