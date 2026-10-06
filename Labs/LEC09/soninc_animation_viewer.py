@@ -10,6 +10,8 @@ SCALE = 4
 FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
 PAUSE_SECONDS = 1.0
+PLAYING = "PLAYING"
+PAUSED = "PAUSED"
 SPRITE_PATH = Path(__file__).resolve().with_name("sonic-sprite.png")
 
 
@@ -150,6 +152,7 @@ class Player:
     """그리기 빈도와 독립적인 경과 시간 기반 프레임 재생."""
 
     def __init__(self):
+        self.state = PLAYING
         self.animation_index = 0
         self.frame_index = 0
         self.completed_repeats = 0
@@ -166,13 +169,19 @@ class Player:
     def update(self, delta):
         if delta < 0:
             raise ValueError("경과 시간은 음수일 수 없습니다.")
+        if self.state == PAUSED:
+            return
         self.elapsed += delta
         while self.elapsed + 1e-12 >= self.animation.interval:
             self.elapsed = max(0.0, self.elapsed - self.animation.interval)
             self.frame_index += 1
             if self.frame_index == len(self.animation.frames):
-                self.frame_index = 0
                 self.completed_repeats += 1
+                if self.completed_repeats == REPEAT_COUNT:
+                    self.frame_index -= 1
+                    self.state = PAUSED
+                    break
+                self.frame_index = 0
 
 
 def draw_frame(sprite, frame):
