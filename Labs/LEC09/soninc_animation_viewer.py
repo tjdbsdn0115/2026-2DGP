@@ -156,6 +156,7 @@ class Player:
         self.animation_index = 0
         self.frame_index = 0
         self.completed_repeats = 0
+        self.completed_cycles = 0
         self.elapsed = 0.0
 
     @property
@@ -173,20 +174,29 @@ class Player:
     def update(self, delta):
         if delta < 0:
             raise ValueError("경과 시간은 음수일 수 없습니다.")
-        if self.state == PAUSED:
-            self.elapsed += delta
-            return
         self.elapsed += delta
-        while self.elapsed + 1e-12 >= self.animation.interval:
-            self.elapsed = max(0.0, self.elapsed - self.animation.interval)
+        while True:
+            duration = (self.animation.interval if self.state == PLAYING
+                        else PAUSE_SECONDS)
+            if self.elapsed + 1e-12 < duration:
+                return
+            self.elapsed = max(0.0, self.elapsed - duration)
+            if self.state == PAUSED:
+                self.animation_index = (self.animation_index + 1) % len(ANIMATIONS)
+                if self.animation_index == 0:
+                    self.completed_cycles += 1
+                self.frame_index = 0
+                self.completed_repeats = 0
+                self.state = PLAYING
+                continue
             self.frame_index += 1
             if self.frame_index == len(self.animation.frames):
                 self.completed_repeats += 1
                 if self.completed_repeats == REPEAT_COUNT:
                     self.frame_index -= 1
                     self.state = PAUSED
-                    break
-                self.frame_index = 0
+                else:
+                    self.frame_index = 0
 
 
 def draw_frame(sprite, frame):
