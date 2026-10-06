@@ -166,10 +166,15 @@ class Player:
     def frame(self):
         return self.animation.frames[self.frame_index]
 
+    @property
+    def pause_complete(self):
+        return self.state == PAUSED and self.elapsed + 1e-12 >= PAUSE_SECONDS
+
     def update(self, delta):
         if delta < 0:
             raise ValueError("경과 시간은 음수일 수 없습니다.")
         if self.state == PAUSED:
+            self.elapsed += delta
             return
         self.elapsed += delta
         while self.elapsed + 1e-12 >= self.animation.interval:
