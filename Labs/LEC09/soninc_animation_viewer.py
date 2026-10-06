@@ -36,6 +36,15 @@ class Frame:
 FIRST_FRAME = Frame(1, 39, 29, 39, 14.5, 39)
 
 
+def draw_frame(sprite, frame):
+    """프레임 종횡비를 유지하여 화면 중앙에 4배 출력한다."""
+    sprite.clip_draw(
+        frame.left, frame.bottom(sprite.h), frame.width, frame.height,
+        CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2,
+        frame.width * SCALE, frame.height * SCALE,
+    )
+
+
 def load_sprite(graphics, path=SPRITE_PATH):
     """실행 파일 위치를 기준으로 이미지를 한 번 읽는다."""
     if not path.is_file():
@@ -63,8 +72,10 @@ def main():
     pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     try:
         sprite = load_sprite(pico2d)
+        FIRST_FRAME.validate(sprite.w, sprite.h)
         while not should_quit(pico2d.get_events(), pico2d):
             pico2d.clear_canvas()
+            draw_frame(sprite, FIRST_FRAME)
             pico2d.update_canvas()
             pico2d.delay(0.005)
     finally:
