@@ -13,6 +13,7 @@ BASELINE_Y = CANVAS_HEIGHT / 2 - 20 * SCALE
 FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
 PAUSE_SECONDS = 1.0
+EDGE_MARGIN = 16
 PLAYING = "PLAYING"
 PAUSED = "PAUSED"
 SPRITE_PATH = Path(__file__).resolve().with_name("sonic-sprite.png")
@@ -44,6 +45,9 @@ class Animation:
     name: str
     frames: tuple[Frame, ...]
     interval: float = FRAME_INTERVAL
+    speed: float = 0.0  # 캔버스 픽셀/초; 0이면 현재 위치에서 재생.
+    jump_height: float = 0.0
+    jump_period: float = 0.8
 
 
 def frames_from_rectangles(rectangles):
@@ -67,7 +71,7 @@ ANIMATIONS = (
         (97, 80, 37, 37), (135, 80, 32, 35), (170, 80, 32, 37),
         (206, 80, 26, 37), (238, 80, 24, 37), (263, 80, 30, 37),
         (295, 80, 36, 37), (334, 80, 32, 36), (370, 80, 29, 37),
-    ))),
+    )), speed=240),
     Animation("빠른 달리기", frames_from_rectangles((
         (1, 124, 33, 40),
         (39, 124, 35, 39),
@@ -75,7 +79,7 @@ ANIMATIONS = (
         (130, 123, 34, 40),
         (181, 123, 34, 40),
         (228, 123, 33, 39),
-    ))),
+    )), speed=360),
     Animation("회전", frames_from_rectangles((
         (1, 169, 29, 30),
         (35, 168, 29, 30),
@@ -86,7 +90,7 @@ ANIMATIONS = (
         (193, 170, 30, 29),
         (230, 170, 31, 29),
         (268, 170, 30, 30),
-    ))),
+    )), speed=180),
     Animation("회전 공", frames_from_rectangles((
         (1, 206, 30, 27),
         (36, 206, 29, 27),
@@ -94,23 +98,23 @@ ANIMATIONS = (
         (105, 206, 29, 27),
         (139, 206, 29, 27),
         (174, 206, 29, 27),
-    ))),
-    Animation("제자리 회전 달리기", frames_from_rectangles((
+    )), speed=260),
+    Animation("회전 달리기", frames_from_rectangles((
         (1, 239, 29, 35),
         (36, 239, 30, 35),
         (74, 239, 31, 35),
         (111, 239, 31, 35),
         (149, 239, 30, 35),
         (186, 239, 31, 35),
-    ))),
-    Animation("제자리 질주", frames_from_rectangles((
+    )), speed=280),
+    Animation("질주", frames_from_rectangles((
         (1, 283, 29, 35),
         (36, 283, 30, 35),
         (72, 286, 39, 31),
         (123, 285, 39, 32),
         (172, 286, 39, 31),
         (218, 285, 38, 32),
-    ))),
+    )), speed=360),
     Animation("공중 회전", frames_from_rectangles((
         (1, 328, 24, 42),
         (31, 328, 29, 42),
@@ -120,7 +124,7 @@ ANIMATIONS = (
         (149, 328, 20, 42),
         (184, 341, 40, 28),
         (232, 341, 39, 27),
-    ))),
+    )), speed=200, jump_height=100),
     Animation("걷기", frames_from_rectangles((
         (1, 379, 27, 37),
         (31, 379, 31, 36),
@@ -130,7 +134,7 @@ ANIMATIONS = (
         (176, 379, 33, 36),
         (217, 379, 33, 36),
         (254, 378, 33, 36),
-    ))),
+    )), speed=120),
     Animation("피격 및 회복", frames_from_rectangles((
         (6, 429, 34, 40),
         (49, 427, 34, 42),
@@ -144,7 +148,11 @@ def validate_animations(image_width, image_height):
     if not ANIMATIONS:
         raise ValueError("등록된 동작이 없습니다.")
     for animation in ANIMATIONS:
-        if not animation.frames or animation.interval <= 0:
+        if (not animation.frames or not isfinite(animation.interval)
+                or animation.interval <= 0 or not isfinite(animation.speed)
+                or animation.speed < 0 or not isfinite(animation.jump_height)
+                or animation.jump_height < 0 or not isfinite(animation.jump_period)
+                or animation.jump_period <= 0):
             raise ValueError(f"잘못된 동작 데이터: {animation.name}")
         for frame in animation.frames:
             frame.validate(image_width, image_height)
