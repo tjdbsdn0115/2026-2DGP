@@ -214,7 +214,12 @@ def load_sprite(graphics, path=SPRITE_PATH):
     try:
         return graphics.load_image(str(path))
     except Exception as error:
-        raise RuntimeError(f"스프라이트 이미지 읽기 실패: {path} ({error!r})") from error
+        detail = str(error) or repr(error)
+        if hasattr(graphics, "SDL_GetError"):
+            sdl_error = graphics.SDL_GetError()
+            if sdl_error:
+                detail += "; " + sdl_error.decode("utf-8", errors="replace")
+        raise RuntimeError(f"스프라이트 이미지 읽기 실패: {path} ({detail})") from error
 
 
 def should_quit(events, graphics):
