@@ -1,6 +1,7 @@
 """소닉 스프라이트를 동작별로 확대 재생하는 pico2d 뷰어."""
 
 from pathlib import Path
+from dataclasses import dataclass
 
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 600
@@ -9,6 +10,30 @@ FRAME_INTERVAL = 0.1
 REPEAT_COUNT = 5
 PAUSE_SECONDS = 1.0
 SPRITE_PATH = Path(__file__).resolve().with_name("sonic-sprite.png")
+
+
+@dataclass(frozen=True)
+class Frame:
+    """위쪽 기준 자르기 영역과 프레임 안의 표시 기준점."""
+
+    left: int
+    top: int
+    width: int
+    height: int
+    anchor_x: float
+    anchor_y: float
+
+    def bottom(self, image_height):
+        return image_height - self.top - self.height
+
+    def validate(self, image_width, image_height):
+        if (self.left < 0 or self.top < 0 or self.width <= 0
+                or self.height <= 0 or self.left + self.width > image_width
+                or self.top + self.height > image_height):
+            raise ValueError(f"이미지 범위를 벗어난 프레임: {self}")
+
+
+FIRST_FRAME = Frame(1, 39, 29, 39, 14.5, 39)
 
 
 def load_sprite(graphics, path=SPRITE_PATH):
