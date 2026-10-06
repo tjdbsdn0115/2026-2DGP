@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from dataclasses import dataclass
+from time import monotonic
 
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 600
@@ -145,6 +146,35 @@ def validate_animations(image_width, image_height):
             frame.validate(image_width, image_height)
 
 
+class Player:
+    """그리기 빈도와 독립적인 경과 시간 기반 프레임 재생."""
+
+    def __init__(self):
+        self.animation_index = 0
+        self.frame_index = 0
+        self.completed_repeats = 0
+        self.elapsed = 0.0
+
+    @property
+    def animation(self):
+        return ANIMATIONS[self.animation_index]
+
+    @property
+    def frame(self):
+        return self.animation.frames[self.frame_index]
+
+    def update(self, delta):
+        if delta < 0:
+            raise ValueError("경과 시간은 음수일 수 없습니다.")
+        self.elapsed += delta
+        while self.elapsed + 1e-12 >= self.animation.interval:
+            self.elapsed = max(0.0, self.elapsed - self.animation.interval)
+            self.frame_index += 1
+            if self.frame_index == len(self.animation.frames):
+                self.frame_index = 0
+                self.completed_repeats += 1
+
+
 def draw_frame(sprite, frame):
     """프레임 종횡비를 유지하여 화면 중앙에 4배 출력한다."""
     sprite.clip_draw(
@@ -182,9 +212,14 @@ def main():
     try:
         sprite = load_sprite(pico2d)
         validate_animations(sprite.w, sprite.h)
+        player = Player()
+        previous = monotonic()
         while not should_quit(pico2d.get_events(), pico2d):
+            now = monotonic()
+            player.update(now - previous)
+            previous = now
             pico2d.clear_canvas()
-            draw_frame(sprite, ANIMATIONS[0].frames[0])
+            draw_frame(sprite, player.frame)
             pico2d.update_canvas()
             pico2d.delay(0.005)
     finally:
