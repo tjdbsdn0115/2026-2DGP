@@ -159,7 +159,7 @@ def validate_animations(image_width, image_height):
 
 
 class Player:
-    """그리기 빈도와 독립적인 경과 시간 기반 프레임 재생."""
+    """경과 시간을 재생·정지 구간으로 나누어 프레임과 위치를 갱신한다."""
 
     def __init__(self):
         self.state = PLAYING
@@ -168,6 +168,17 @@ class Player:
         self.completed_repeats = 0
         self.completed_cycles = 0
         self.elapsed = 0.0
+        self.x = CANVAS_WIDTH / 2
+        self.y = BASELINE_Y
+        self.direction = 1
+        self.motion_elapsed = 0.0
+        # 동작 전환 때 더 넓은 프레임으로 바뀌어도 잘리지 않는 공통 경계.
+        extent = max(max(frame.anchor_x, frame.width - frame.anchor_x)
+                     for animation in ANIMATIONS for frame in animation.frames) * SCALE
+        self.left_bound = EDGE_MARGIN + extent
+        self.right_bound = CANVAS_WIDTH - EDGE_MARGIN - extent
+        if self.left_bound >= self.right_bound:
+            raise ValueError("캔버스가 확대된 프레임을 표시하기에 너무 좁습니다.")
 
     @property
     def animation(self):
@@ -177,13 +188,37 @@ class Player:
     def frame(self):
         return self.animation.frames[self.frame_index]
 
+    def _move(self, delta):
+        self.motion_elapsed += delta
+        if self.animation.speed:
+            span = self.right_bound - self.left_bound
+            position = self.x - self.left_bound
+            phase = position if self.direction == 1 else 2 * span - position
+            phase = (phase + self.animation.speed * delta) % (2 * span)
+            if phase < span:
+                self.x = self.left_bound + phase
+                self.direction = 1
+            else:
+                self.x = self.left_bound + 2 * span - phase
+                self.direction = -1
+        if self.animation.jump_height:
+            phase = (self.motion_elapsed % self.animation.jump_period) / self.animation.jump_period
+            self.y = BASELINE_Y + 4 * self.animation.jump_height * phase * (1 - phase)
+        else:
+            self.y = BASELINE_Y
+
     def update(self, delta):
         if not isfinite(delta) or delta < 0:
             raise ValueError("경과 시간은 유한한 0 이상의 수여야 합니다.")
-        self.elapsed += delta
-        while True:
+        remaining = delta
+        while remaining > 0:
             duration = (self.animation.interval if self.state == PLAYING
                         else PAUSE_SECONDS)
+            step = min(remaining, max(0.0, duration - self.elapsed))
+            if self.state == PLAYING:
+                self._move(step)
+            self.elapsed += step
+            remaining = max(0.0, remaining - step)
             if self.elapsed + 1e-12 < duration:
                 return
             self.elapsed = max(0.0, self.elapsed - duration)
@@ -194,6 +229,8 @@ class Player:
                 self.frame_index = 0
                 self.completed_repeats = 0
                 self.state = PLAYING
+                self.motion_elapsed = 0.0
+                self.y = BASELINE_Y
                 continue
             self.frame_index += 1
             if self.frame_index == len(self.animation.frames):
@@ -205,14 +242,16 @@ class Player:
                     self.frame_index = 0
 
 
-def draw_frame(sprite, frame):
-    """프레임 종횡비를 유지하여 화면 중앙에 4배 출력한다."""
-    sprite.clip_draw(
-        frame.left, frame.bottom(sprite.h), frame.width, frame.height,
-        CANVAS_WIDTH / 2 + (frame.width / 2 - frame.anchor_x) * SCALE,
-        BASELINE_Y + (frame.anchor_y - frame.height / 2) * SCALE,
-        frame.width * SCALE, frame.height * SCALE,
-    )
+def draw_frame(sprite, frame, x=CANVAS_WIDTH / 2, y=BASELINE_Y, direction=1):
+    """현재 위치에 4배 출력하고 왼쪽 이동 시 기준점과 이미지를 반전한다."""
+    center_x = x + direction * (frame.width / 2 - frame.anchor_x) * SCALE
+    center_y = y + (frame.anchor_y - frame.height / 2) * SCALE
+    rectangle = (frame.left, frame.bottom(sprite.h), frame.width, frame.height)
+    destination = (center_x, center_y, frame.width * SCALE, frame.height * SCALE)
+    if direction == -1:
+        sprite.clip_composite_draw(*rectangle, 0, "h", *destination)
+    else:
+        sprite.clip_draw(*rectangle, *destination)
 
 
 def load_sprite(graphics, path=SPRITE_PATH):
@@ -259,7 +298,7 @@ def main():
                 player.update(now - previous)
                 previous = now
                 pico2d.clear_canvas()
-                draw_frame(sprite, player.frame)
+                draw_frame(sprite, player.frame, player.x, player.y, player.direction)
                 pico2d.update_canvas()
                 pico2d.delay(0.005)
         finally:
