@@ -236,6 +236,7 @@ def main():
         try:
             pico2d.open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
             canvas_open = True
+            pico2d.hide_lattice()
             sprite = load_sprite(pico2d)
             validate_animations(sprite.w, sprite.h)
             player = Player()
