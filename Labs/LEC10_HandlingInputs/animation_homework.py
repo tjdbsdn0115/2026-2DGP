@@ -8,12 +8,14 @@ ASSET_DIR = Path(__file__).resolve().parent
 running = True
 x, y = WIDTH / 2, HEIGHT / 2
 frame = 0
+facing = 'RIGHT'
+state = 'IDLE'
 pressed_keys = set()
 ARROW_KEYS = {SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN}
 
 
 def handle_events():
-    global running
+    global running, facing
     for event in get_events():
         if event.type == SDL_QUIT:
             running = False
@@ -22,22 +24,31 @@ def handle_events():
                 running = False
             elif event.key in ARROW_KEYS:
                 pressed_keys.add(event.key)
+                if event.key == SDLK_LEFT:
+                    facing = 'LEFT'
+                elif event.key == SDLK_RIGHT:
+                    facing = 'RIGHT'
         elif event.type == SDL_KEYUP:
             pressed_keys.discard(event.key)
 
 
 def update():
-    global x, y
+    global x, y, frame, state
     dx = int(SDLK_RIGHT in pressed_keys) - int(SDLK_LEFT in pressed_keys)
     dy = int(SDLK_UP in pressed_keys) - int(SDLK_DOWN in pressed_keys)
     x += dx * 3
     y += dy * 3
+    state = 'MOVE' if dx or dy else 'IDLE'
+    frame = (frame + 1) % 8
 
 
 def draw(background, character):
     clear_canvas()
     background.draw(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT)
-    character.clip_draw(frame * FRAME_SIZE, 300, FRAME_SIZE, FRAME_SIZE, x, y)
+    # 시트 아래부터: 왼쪽 이동, 오른쪽 이동, 왼쪽 대기, 오른쪽 대기.
+    row = (2 if state == 'IDLE' else 0) + (1 if facing == 'RIGHT' else 0)
+    character.clip_draw(frame * FRAME_SIZE, row * FRAME_SIZE,
+                        FRAME_SIZE, FRAME_SIZE, x, y)
     update_canvas()
 
 
