@@ -46,7 +46,7 @@ def move_rectangle():
     move_top()
     move_right()
     move_bottom()
-    move_left() 
+    move_left()
 
 def move_line(x0, y0, x1, y1, steps=100):
     for step in range(1, steps + 1):
