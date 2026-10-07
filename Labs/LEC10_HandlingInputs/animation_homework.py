@@ -8,6 +8,8 @@ ASSET_DIR = Path(__file__).resolve().parent
 running = True
 x, y = WIDTH / 2, HEIGHT / 2
 frame = 0
+pressed_keys = set()
+ARROW_KEYS = {SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN}
 
 
 def handle_events():
@@ -15,8 +17,21 @@ def handle_events():
     for event in get_events():
         if event.type == SDL_QUIT:
             running = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
+        elif event.type == SDL_KEYDOWN:
+            if event.key == SDLK_ESCAPE:
+                running = False
+            elif event.key in ARROW_KEYS:
+                pressed_keys.add(event.key)
+        elif event.type == SDL_KEYUP:
+            pressed_keys.discard(event.key)
+
+
+def update():
+    global x, y
+    dx = int(SDLK_RIGHT in pressed_keys) - int(SDLK_LEFT in pressed_keys)
+    dy = int(SDLK_UP in pressed_keys) - int(SDLK_DOWN in pressed_keys)
+    x += dx * 3
+    y += dy * 3
 
 
 def draw(background, character):
@@ -35,6 +50,7 @@ def main():
             handle_events()
             if not running:
                 break
+            update()
             draw(background, character)
             delay(0.01)
     finally:
