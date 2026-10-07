@@ -36,9 +36,11 @@ def update():
     global x, y, frame, state
     dx = int(SDLK_RIGHT in pressed_keys) - int(SDLK_LEFT in pressed_keys)
     dy = int(SDLK_UP in pressed_keys) - int(SDLK_DOWN in pressed_keys)
-    x += dx * 3
-    y += dy * 3
-    state = 'MOVE' if dx or dy else 'IDLE'
+    old_x, old_y = x, y
+    half = FRAME_SIZE / 2
+    x = max(half, min(WIDTH - half, x + dx * 3))
+    y = max(half, min(HEIGHT - half, y + dy * 3))
+    state = 'MOVE' if (x, y) != (old_x, old_y) else 'IDLE'
     frame = (frame + 1) % 8
 
 
